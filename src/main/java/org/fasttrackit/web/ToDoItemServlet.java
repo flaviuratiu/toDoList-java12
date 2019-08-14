@@ -1,8 +1,6 @@
 package org.fasttrackit.web;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.fasttrackit.config.ObjectMapperConfiguration;
 import org.fasttrackit.domain.ToDoItem;
 import org.fasttrackit.service.ToDoItemService;
@@ -46,6 +44,17 @@ public class ToDoItemServlet extends HttpServlet {
             resp.getWriter().print(responseJson);
             resp.getWriter().flush();
             resp.getWriter().close();
+        } catch (SQLException | ClassNotFoundException e) {
+            resp.sendError(500, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String id = req.getParameter("id");
+
+        try {
+            toDoItemService.deleteToDoItem(Long.parseLong(id));
         } catch (SQLException | ClassNotFoundException e) {
             resp.sendError(500, "Internal server error: " + e.getMessage());
         }
